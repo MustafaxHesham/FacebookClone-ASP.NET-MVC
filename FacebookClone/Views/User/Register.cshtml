@@ -1,0 +1,155 @@
+﻿@model FacebookClone.Models.User
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container register form">
+
+    <div class="card split">
+
+        <div class="form-image">
+            <img src="~/Images/login.svg" srcset="" alt="Login Image" />
+        </div>
+
+        <div class="form-wrapper flex-center">
+
+            <div class="heading">
+                <h1 class="display-1">@ViewBag.Title</h1>
+                <h3 class="display-2">Log in to the app.</h3>
+            </div>
+
+            @using (Html.BeginForm("Register", "User", FormMethod.Post))
+            {
+
+        <div class="input-group flex-center">
+            <!--  <form action="~/Home/Timeline" method="POST" class="input-group flex-center"> -->
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-user-line"></i>
+                </span>
+                @Html.TextBoxFor(u => u.FirstName, new { placeHolder = Html.DisplayNameFor(u => u.FirstName), required = true })
+                @Html.ValidationMessageFor(U => U.FirstName)
+                @*<input type="text" name="FirstName" placeholder="First Name" required>*@
+            </div>
+            
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-user-line"></i>
+                </span>
+                @Html.TextBoxFor(u => u.LastName, new { placeHolder = Html.DisplayNameFor(u => u.LastName), required = true })
+                @Html.ValidationMessageFor(U => U.LastName)
+            </div>
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-mail-line"></i>
+                </span>
+                @Html.TextBoxFor(u => u.Email, new {id="email", placeHolder = Html.DisplayNameFor(u => u.Email), required = true,
+               onchange = "CheckEmail()"})
+
+            </div>
+            <small style="color:red ">@Html.ValidationMessageFor(U => U.LastName)</small>
+            <span id="validate-email"></span>
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-lock-line"></i>
+                </span>
+                @Html.PasswordFor(u => u.Password, new { id = "P", placeHolder = Html.DisplayNameFor(u => u.Password), required = true })
+            </div>
+
+            <p id="pass-confirm"></p>
+
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-check-double-line"></i>
+                </span>
+                <input type="password" id="PC" name="Password" placeholder="Confirm Password" required>
+            </div>
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-map-pin-2-line"></i>
+                </span>
+                @Html.TextBoxFor(u => u.City, new { placeHolder = Html.DisplayNameFor(u => u.City), required = true })
+            </div>
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-flag-line"></i>
+                </span>
+                @Html.TextBoxFor(u => u.Country, new { placeHolder = Html.DisplayNameFor(u => u.Country), required = true })
+            </div>
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-phone-line"></i>
+                </span>
+                @Html.TextBoxFor(u => u.PhoneNumber, new { placeHolder = Html.DisplayNameFor(u => u.PhoneNumber), required = true })
+            </div>
+
+            <div class="btn-group" style="margin-top: 16px">
+                @Html.AntiForgeryToken()
+                <button onclick="ValidateData(event);" id="regForm" type="submit" class="btn btn-1" style="margin-bottom: 32px;">
+                    <i class="ri ri-user-add-line"></i>
+                    <small>Register</small>
+                </button>
+            </div>
+
+            <div class="heading">
+                <a href="/Home/Login" class="display-2">
+                    <small>Already have account?<span class="display-1">&nbsp;Click here to log in.</span></small>
+                </a>
+            </div>
+
+        </div>
+            }
+
+        </div>
+
+
+    </div>
+
+</div>
+
+<script>
+    let formState = false;
+    (function defState() {
+        formState = false;
+    })();
+    function ValidateData(event) {
+        let regButton = document.getElementById('regForm');
+        if (document.getElementById("P").value !== document.getElementById("PC").value) {
+            event.preventDefault();
+            let confirm = document.getElementById("pass-confirm");
+            confirm.textContent = "Two fields aren't identical.";
+            confirm.style.cssText = "color: red;font-size: small";
+        }
+        if (formState === false)
+            event.preventDefault();
+    }
+
+    function CheckEmail() {
+        let Email = document.getElementById("email").value;
+        let RequestTitle = window.location.origin +
+            `/User/ValidateRegistration?Email=${Email}`;
+        const XHR = new XMLHttpRequest();
+        XHR.onload = function () {
+            if (XHR.responseText === "valid") {
+                document.getElementById("validate-email").textContent = "";
+                formState = true;
+            }
+            else {
+                document.getElementById("validate-email").style.cssText = "color: red";
+                document.getElementById("validate-email").textContent = "This Email Already Exists.";
+                formState = false;
+            }
+        };
+        XHR.open("GET", RequestTitle, true);
+        XHR.send();
+    }
+</script>

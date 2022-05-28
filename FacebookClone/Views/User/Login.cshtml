@@ -1,0 +1,55 @@
+﻿@model FacebookClone.ViewModel.LoginViewModel
+
+@{
+    ViewBag.Title = "Log in";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container login form">
+    
+    <div class="card split">
+        
+        <div class="form-image">
+            <img src="~/Images/login.svg" srcset="" alt="Login Image" /> 
+        </div>
+
+        <div class="form-wrapper flex-center">
+
+            <div class="heading">
+                <h1 class="display-1">@ViewBag.Title</h1>
+                <h3 class="display-2">Log in to the app.</h3>
+            </div>
+            @using (Html.BeginForm("Login", "User", FormMethod.Post, new { @class = "input-group flex-center" }))
+            {
+        <div class="input-field">
+            <span class="input-field-span">
+                <i class="ri ri-mail-line"></i>
+            </span>
+            @Html.TextBoxFor(lvm => lvm.Email, new { id = "email", placeholder = Html.DisplayNameFor(u => u.Email), required = "true" })
+        </div>
+
+        <div class="input-field">
+            <span class="input-field-span">
+                <i class="ri ri-lock-line"></i>
+            </span>
+            @Html.PasswordFor(lvm => lvm.Password, new { id = "password", placeholder = Html.DisplayNameFor(u => u.Password), required = "true" })
+        </div>
+
+        <div class="btn-group" style="margin-top: 16px">
+            <button type="submit" class="btn btn-1" style="margin-bottom: 32px">
+                <i class="ri ri-check-line"></i>
+                <small>Enter</small>
+            </button>
+        </div>
+
+        <div class="heading">
+            <a href="~/User/Register" class="display-2">
+                <small>Don't have account yet?<span class="display-1">&nbsp;Create a new one.</span></small>
+            </a>
+        </div>
+        <span style="color:red">@ViewBag.Invalid</span>
+            }
+        </div>        
+    </div>
+
+</div>

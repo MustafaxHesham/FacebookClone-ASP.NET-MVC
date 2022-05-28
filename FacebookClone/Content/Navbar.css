@@ -1,0 +1,41 @@
+/* NAVBAR */
+
+nav.navbar {
+  height: 8vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 4px 16px 16px hsla(260, 0%, 20%, 0.2);
+}
+
+nav.navbar .btn-2 {
+  height: 40px;
+  font-size: 20px;
+}
+
+ul.drawer,
+.nav-brand {
+  color: var(--blue-clr);
+}
+
+
+ul.drawer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 120ms ease-in-out;
+}
+
+ul.drawer .btn {
+  background: transparent;
+  color: var(--blue-clr);
+  margin: 4px 0px;
+}
+
+@media all and (max-width: 525px) {
+  ul.drawer {
+    flex-direction: column;
+    align-items: center;
+  }
+}

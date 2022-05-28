@@ -1,0 +1,52 @@
+﻿@model IEnumerable<FacebookClone.Models.Friendship>
+@{
+    ViewBag.Title = "Friends";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_Navbar")
+
+<div class="container search">
+    <div class="heading">
+        <h1 class="display-1">@ViewBag.Title</h1>
+        <p class="display-2">Find all your friends here.</p>
+    </div>
+
+    <div class="grid-items">
+
+        @{
+            foreach (var Friend in Model)
+            {
+                if (Friend.User1ID != ViewBag.uid)
+                {
+                    <a href="~/User/Details/@Friend.User1.Id" class="search-grid-item card user user-2">
+                        <div class="avatar avatar-2" style="margin-bottom: 16px">
+                            <img src="@Url.Content(Friend.User1.ProfileImageURL)" alt="">
+                        </div>
+                        <h4 class="display-1">@Friend.User1.FirstName @Friend.User1.LastName</h4>
+                    </a>
+
+                }
+                else
+                {
+                    <a href="~/User/Details/@Friend.User2.Id" class="search-grid-item card user user-2">
+                        <div class="avatar avatar-2" style="margin-bottom: 16px">
+                            <img src="@Url.Content(Friend.User2.ProfileImageURL)" alt="">
+                        </div>
+                        <h4 class="display-1">@Friend.User2.FirstName @Friend.User2.LastName</h4>
+                    </a>
+                }
+            }
+        }
+
+    </div>
+    <div class="btn-group" style="margin-top: 16px">
+        <a href="@Request.UrlReferrer" class="btn btn-1" style="margin-bottom: 32px;">
+            <i class="ri ri-arrow-left-line"></i>
+            <span>Go back</span>
+        </a>
+    </div>
+
+</div>
+
+

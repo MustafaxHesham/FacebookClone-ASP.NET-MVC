@@ -1,0 +1,69 @@
+﻿
+@{
+    ViewBag.Title = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_Navbar")
+
+<div class="container search">
+    <div class="heading">
+        <h1 class="display-1">@ViewBag.Title</h1>
+        <p class="display-2">Find a user by email or phone number.</p>
+    </div>
+
+    <div class="input-field">
+        <span class="input-field-span">
+            <i class="ri ri-search-line"></i>
+        </span>
+        <input type="search" name="" oninput="getUsers()" id="search-field" placeholder="Enter an email or phone...">
+    </div>
+
+    <div id="users-cont" class="grid-items">
+    </div>
+
+    <div class="btn-group" style="margin-top: 16px">
+        <a href="~/Home/Timeline" class="btn btn-1" style="margin-bottom: 32px;">
+            <i class="ri ri-arrow-left-line"></i>
+            <span>Go back</span>
+        </a>
+    </div>
+
+
+</div>
+
+<script>
+    function getUsers() {
+        let searchData = document.getElementById("search-field").value;
+        const XHR = new XMLHttpRequest();
+        let ReqURL = window.origin + `/home/getusers?EmailOrPhoneNumber=${searchData}`
+        XHR.onload = function () {
+            let Arr = JSON.parse(XHR.response);
+            showUsers(Arr);
+        }
+        XHR.open("GET", ReqURL, true);
+        XHR.send();
+    }
+
+    function showUsers(...Users) {
+        const container = document.getElementById("users-cont");
+        let formattedData = '';
+        for (let i of Users) {
+            for (j of i) {
+                let imgSrc = j.ProfileImageURL;
+                console.log(j);
+                if (j.ProfileImageURL !== null)
+                    imgSrc = j.ProfileImageURL.slice(1);
+                formattedData += `
+            <a href="/User/Details/${j.Id}" class="search-grid-item card user user-2">
+                <div class="avatar avatar-2" style="margin-bottom: 16px">
+                    <img id="T" src='${imgSrc}' alt="">
+                </div>
+                <h4 class="display-1">${j.FirstName} ${j.LastName}</h4>
+            </a>
+            `
+            }
+        }
+        container.innerHTML = formattedData;
+    }
+</script>

@@ -1,0 +1,40 @@
+.add-post {
+    padding: 0px 32px
+}
+
+.add-post > * {
+    margin: 24px 0px;
+}
+
+.timeline .post-top,
+.timeline .post-bottom {
+    padding: 32px;
+    color: var(--black-clr);
+}
+
+.post-body {
+  margin: 16px 0px;
+}
+
+.post-bottom {
+  background: hsla(255, 0%, 94%, 1);
+}
+
+.post-bottom .user {
+  margin-bottom: 24px;
+}
+
+[comment-hidden] {
+  display: none;
+}
+
+@media all and (max-width: 525px) {
+    .timeline .post-top,
+    .timeline .post-bottom {
+      padding: 24px;
+    }
+
+    .add-post {
+        padding: 0px 24px
+    }
+}

@@ -1,0 +1,32 @@
+﻿.edit-profile .avatar {
+    position: relative;
+}
+
+.edit-profile .user-2 {
+    margin: 0px 0px 16px 0px;
+}
+
+.edit-profile #upload-btn {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    color: var(--white-clr);
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
+    transition: 175ms all ease-out;
+}
+
+.edit-profile .avatar:hover #upload-btn {
+    background: hsla(100, 0%, 10%, 0.8) !important;
+    opacity: 1;
+}
+
+.edit-profile #file {
+    display: none;
+}

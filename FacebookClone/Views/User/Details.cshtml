@@ -1,0 +1,123 @@
+﻿@model FacebookClone.Models.User
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_Navbar")
+<div class="container profile">
+    <div class="card">
+
+        <div class="flex-center">
+            <a class="user user-2">
+                <div class="avatar avatar-3" style="margin-bottom: 16px">
+                    <img src="@Url.Content(Model.ProfileImageURL)" alt="">
+                </div>
+            </a>
+
+            <div class="heading">
+                <h1 style="color: var(--black-clr)">@Model.FirstName @Model.LastName</h1>
+                <p class="display-2">@Model.Email</p>
+            </div>
+
+            <div class="btn-group" style="margin: 0px 0px 24px 0px">
+                <a href="~/User/UserPosts/@Model.Id" class="btn btn-2">
+                    <i class="ri-article-line"></i>
+                    <small>@ViewBag.Posts</small>
+                </a>
+                <a href="~/User/Friends/@Model.Id" class="btn btn-2">
+                    <i class="ri-group-line"></i>
+                    <small>@ViewBag.Friends</small>
+                </a>
+            </div>
+
+            <span id="error-warner"></span>
+            @{
+                if (Model.Id == ViewBag.uid)
+                {
+                    <div class="btn-group">
+                        <a href="~/User/EditProfile/@Model.Id" class="btn btn-1">
+                            <i class="ri ri-user-settings-line"></i>
+                            <small>Edit Profile</small>
+                        </a>
+                    </div>
+
+                }
+                else
+                {
+                    if (ViewBag.isFriend == "Not Friends")
+                    {
+                        <div class="btn-group">
+                            <a class="btn btn-1 btn-friends" onclick="addFriend()">
+                                <i class="ri ri-user-add-line"></i>
+                                <small>Add Friend</small>
+                            </a>
+                        </div>
+                    }
+
+                    else if (ViewBag.isFriend == "Friend")
+                    {
+                        <div class="btn-group">
+                            <div class="btn btn-1 btn-friends" style="cursor:default">
+                                <i class="ri ri-user-add-line"></i>
+                                <small>Friend</small>
+                            </div>
+                        </div>
+                    }
+
+                    else if (ViewBag.isFriend == "Request on hold")
+                    {
+                        <div class="btn-group">
+                            <div class="btn btn-1 btn-friends" style="
+                                background:var(--white-clr);
+                                color : var(--blue-clr);
+                                cursor:default ">
+                                <i class="ri ri-check-line"></i>
+                                <small>Request</small>
+                            </div>
+                        </div>
+                    }
+                }
+                <div class="btn-group" style="margin-top: 16px">
+                    <a href="@Request.UrlReferrer" class="btn btn-1">
+                        <i class="ri ri-arrow-left-line"></i>
+                        <span>Go back</span>
+                    </a>
+                </div>
+
+            }
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+    let addFriend = () => {
+
+        const XHR = new XMLHttpRequest();
+        let req = window.location.origin +
+            `/friendship/SendFriendRequest?requestedFriend=${@Model.Id}`;
+        XHR.onload = function () {
+            if (XHR.responseText === "done") {
+                let addFriendBtn = $(".profile .btn-friends")
+
+                addFriendBtn.children("i").addClass("ri-check-line").removeClass("ri-user-add-line")
+                addFriendBtn.children("small").replaceWith(`<small>Requested</small>`)
+
+                addFriendBtn.css({
+                    "background": "var(--white-clr)",
+                    "color": "var(--blue-clr)"
+                });
+            }
+            else {
+                const err = document.getElementById("error-warner");
+                err.style = "color: red;";
+                err.textContent = "Error Happened";
+            }
+        }
+        XHR.open("GET", req, true);
+        XHR.send();
+    }
+</script>

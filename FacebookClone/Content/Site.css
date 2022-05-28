@@ -1,0 +1,193 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+:root {
+    --blue-clr: hsl(224, 100%, 44%);
+    --grey-clr: hsl(0, 0%, 50%);
+    --purple-clr: hsl(262, 65%, 54%);
+    --black-clr: hsl(0, 0%, 24%);
+    --white-clr: hsl(0, 0%, 98%);
+    --shadow: 4px 4px 16px hsla(0, 0%, 10%, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+a,
+i {
+    color: inherit;
+}
+
+li {
+    list-style: none;
+}
+
+img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.container {
+    padding: 32px 20vw;
+}
+
+/* Heading Variants */
+
+.heading > *:last-child {
+    margin-bottom: 32px;
+}
+
+.heading .display-1 {
+    color: var(--blue-clr);
+    line-height: 0.92em
+}
+
+.heading .display-2 {
+    color: var(--grey-clr);
+}
+
+/* Card */
+
+.card {
+    background: var(--white-clr);
+    box-shadow: var(--shadow);
+    border-radius: 24px;
+    margin: 0px 0px 32px 0px;
+    overflow: hidden;
+}
+
+/* Avatar Variants */
+
+.user {
+    display: flex;
+}
+
+.user-1 {
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.user-2 {
+    flex-direction: column;
+    align-items: center;
+    text-align: center
+}
+
+.avatar {
+    overflow: hidden;
+}
+
+.avatar-1 {
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+}
+
+.avatar-2 {
+    width: 72px;
+    height: 72px;
+    border-radius: 24px;
+}
+
+.avatar-3 {
+    width: 96px;
+    height: 96px;
+    border-radius: 36px;
+}
+
+/* Button Variants */
+
+button,
+.btn {
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 500;
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    border: none;
+    outline: none;
+}
+
+.btn-group {
+    display: flex;
+    width: 240px;
+}
+
+    .btn-group > .btn {
+        flex: 1;
+    }
+
+.btn {
+    box-shadow: none;
+    display: flex;
+}
+
+    .btn:hover {
+        box-shadow: var(--shadow);
+    }
+
+.btn-1 {
+    width: 100%;
+    background: var(--blue-clr);
+    color: var(--white-clr);
+    padding: 8px 24px;
+    justify-content: center;
+    align-items: center;
+}
+
+    .btn-1 .ri {
+        margin-right: 6px;
+    }
+
+    .btn-1>*:not(.ri) {
+        font-size: 14px !important;
+    }
+
+    .btn-1:hover {
+        background: hsl(224, 95%, 54%);
+    }
+
+.btn-2 {
+    background: transparent;
+    color: var(--blue-clr);
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 8px;
+    height: 62px;
+}
+
+@media all and (max-width: 525px) {
+    .btn-group {
+        width: 100%;
+    }
+
+        .btn-group > .btn {
+            flex: 1;
+            margin-right: 0px;
+        }
+}
+
+/* Media Queries */
+
+@media all and (max-width: 991px) {
+    .container {
+        padding: 32px 10vw;
+    }
+}
+
+@media all and (max-width: 525px) {
+    .container {
+        padding: 32px;
+    }
+}

@@ -1,0 +1,368 @@
+﻿@model FacebookClone.ViewModel.TimelineViewModel
+
+@{
+    ViewBag.Title = "Welcome";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_Navbar")
+
+<div class="container timeline">
+
+    <div class="heading">
+        <h1 class="display-1">Welcome!</h1>
+        <h3 class="display-2">Check what you have left</h3>
+    </div>
+
+    <div class="card add-post">
+
+        <div class="user user-1">
+            <div class="avatar avatar-1">
+                <a href="~/User/MyProfile/@Model.loggedInUser.Id">
+                    <img src="@Url.Content(Model.loggedInUser.ProfileImageURL)" alt="" srcset="">
+                </a>
+            </div>
+            <div class="user-content">
+                <h4 class="username">@Model.loggedInUser.FirstName @Model.loggedInUser.LastName</h4>
+            </div>
+        </div>
+
+        <div class="input-field">
+            <span class="input-field-span">
+                <i class="ri-add-box-line"></i>
+            </span>
+            <input type="text" name="" id="pContent" placeholder="What goes inside your head?">
+        </div>
+
+        <div class="btn-group">
+            <button href="#" class="btn btn-1" onclick="addNewPost(document.getElementById('pContent').value)">
+                <i class="ri ri-user-line"></i>
+                <span>Add new post</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="posts-container">
+        @foreach (var post in Model.Posts)
+        {
+            <div class="card">
+                <div class="post-top" id="post-top-@post.Id">
+                    <div class="user user-1">
+                        <div class="avatar avatar-1">
+                            <img src="@Url.Content(post.Publisher.ProfileImageURL)" alt="" srcset="">
+                        </div>
+                        <div class="user-content">
+                            <h4 class="username">
+                                @post.Publisher.FirstName
+                                                        @post.Publisher.LastName
+                                                    </h4>
+                        </div>
+                    </div>
+
+                    <div class="post-body">
+                        @post.PostContent
+                    </div>
+
+                    <div class="btn-group">
+                        <a class="btn btn-2" id="like-btn" onclick="like(@post.Id)">
+                            @if (post.Reacts.Find(r => (r.UserID == Model.loggedInUser.Id) && (r.Like == true)) != null)
+                            {
+                                <i class="ri ri-thumb-up-fill"></i>
+                            }
+                            else
+                            {
+                                <i class="ri ri-thumb-up-line"></i>
+                            }
+                            <small>@post.Reacts.Count(r => r.Like == true)</small>
+                        </a>
+                        
+                        
+                        <a class="btn btn-2" id="dislike-btn" onclick="dislike(@post.Id)">
+
+                            @if (post.Reacts.Find(r => (r.UserID == Model.loggedInUser.Id) && (r.Like == false)) != null)
+                            {
+                                <i class="ri ri-thumb-down-fill"></i>
+                            }
+                            else
+                            {
+                                <i class="ri ri-thumb-down-line"></i>
+                            }
+
+                            <small>@post.Reacts.Count(r => r.Like == false)</small>
+                        </a>
+
+
+
+                        <a class="btn btn-2" onclick="revealComments(@post.Id)">
+                            <i class="ri ri-message-2-line"></i>
+                            <small>@post.Comments.Count</small>
+                        </a>
+                    </div>
+                </div>
+                <div class="post-bottom" id="post-bottom-@post.Id" comment-hidden>
+
+                    <div class="heading">
+                        <h3 class="display-1">Comments</h3>
+                    </div>
+
+                    <div class="comment-users">
+
+                        @foreach (var comment in post.Comments)
+                        {
+                            <div class="user user-1">
+                                <div class="avatar avatar-1">
+                                    <img src="@Url.Content(comment.User.ProfileImageURL)" alt="" srcset="">
+                                </div>
+                                <div class="user-content">
+                                    <h4 class="username">@comment.User.FirstName @comment.User.LastName</h4>
+                                    <small>@comment.CommentContent</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+
+                    <div class="input-field">
+                        <input type="text" name="" id="cContent-@post.Id" placeholder="Type your comment...">
+                        <button onclick="addComment(document.getElementById(`cContent-@post.Id`).value, @post.Id)">
+                            <span class="input-field-span">
+                                <i class="ri-add-line"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                </div>
+        }
+                </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    let revealComments = (id) =>
+        $(`#post-bottom-${id}`).slideToggle("[comment-hidden]")
+
+    let like = (id) => {
+        let likeBtn = $(`#post-top-${id}`).children(".btn-group").children("#like-btn")
+        let dislikeBtn = $(`#post-top-${id}`).children(".btn-group").children("#dislike-btn")
+        let likeCount = likeBtn.children("small");
+        let dislikeCount = dislikeBtn.children("small");
+
+        const XHR = new XMLHttpRequest();
+
+        //Add Like
+        if (likeBtn.children().hasClass('ri-thumb-up-line')) {
+
+            const URL = window.location.origin + `/react/addLike`;
+            XHR.onload = function () {
+
+                //Modify the icon
+                likeBtn.children("i.ri-thumb-up-line").replaceWith("<i class='ri-thumb-up-fill'>")
+                //Modify the text
+                let newValue = parseInt(likeCount.text())
+                    likeCount.text(++newValue)
+            }
+            XHR.open('POST', URL, true);
+            XHR.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            XHR.send(`pid=${id}`);
+        }
+
+
+
+        else if (!likeBtn.children().hasClass('ri-thumb-up-line')) {
+            const URL = window.location.origin + `/react/removeLike`;
+            XHR.onload = function () {
+                    //Modify the icon
+                    likeBtn.children("i.ri-thumb-up-fill").replaceWith("<i class='ri-thumb-up-line'>")
+                    //Modify the text
+                    let newValue = parseInt(likeCount.text())
+                    likeCount.text(--newValue)
+            }
+            XHR.open('POST', URL, true);
+            XHR.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            XHR.send(`pid=${id}`);
+        }
+
+
+        if (dislikeBtn.children().hasClass('ri-thumb-down-fill')) {
+                    let newValue = parseInt(dislikeCount.text())
+                    dislikeCount.text(--newValue)
+
+                    dislikeBtn.get(0).innerHTML =
+                                `
+                        <i class="ri-thumb-down-line"></i>
+                        <small>${newValue}</small>
+                        `;
+        }
+    }
+
+    let dislike = (id) => {
+        let likeBtn = $(`#post-top-${id}`).children(".btn-group").children("#like-btn")
+        let dislikeBtn = $(`#post-top-${id}`).children(".btn-group").children("#dislike-btn")
+        let dislikeCount = dislikeBtn.children("small");
+        let likeCount = likeBtn.children("small");
+
+        const XHR = new XMLHttpRequest();
+
+        //Add Dislike
+        if (dislikeBtn.children().hasClass('ri-thumb-down-line')) {
+            const URL = window.location.origin + `/react/addDislike`;
+            XHR.onload = function () {
+                //Modify the icon
+                dislikeBtn.children("i.ri-thumb-down-line").replaceWith("<i class='ri-thumb-down-fill'>")
+                //Modify the text
+                let newValue = parseInt(dislikeCount.text())
+                dislikeCount.text(++newValue)
+            }
+            XHR.open('POST', URL, true);
+            XHR.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            XHR.send(`pid=${id}`);
+        }
+
+        //Remove Dislike
+        else if (!dislikeBtn.children().hasClass('ri-thumb-down-line')) {
+            const URL = window.location.origin + `/react/removeDislike`;
+            XHR.onload = function () {
+                    //Modify the icon
+                    dislikeBtn.children("i.ri-thumb-down-fill").replaceWith("<i class='ri-thumb-down-line'>")
+                    //Modify the text
+                    let newValue = parseInt(dislikeCount.text())
+                    dislikeCount.text(--newValue)
+            }
+            XHR.open('POST', URL, true);
+            XHR.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            XHR.send(`pid=${id}`);
+        }
+
+        //Remove Like
+        if (likeBtn.children().hasClass('ri-thumb-up-fill')) {
+
+                let newValue = parseInt(likeCount.text())
+                likeCount.text(--newValue)
+                likeBtn.get(0).innerHTML =
+                    `
+                <i class="ri-thumb-up-line"></i>
+                <small>${newValue}</small>
+                `;
+        }
+    }
+
+    var postsCount = 0
+    let addNewPost = (p) => {
+        if (p !== '') {
+            let postID = 0;
+            let addPost = (postContent) => {
+                const XHR = new XMLHttpRequest();
+                let Url = window.location.origin + `/post/addnewpost`
+                XHR.onload = () => {
+                    postID = parseInt(XHR.responseText);
+                    addPostNow(postID);
+                    document.getElementById('pContent').value = '';
+                };
+                XHR.open("POST", Url, true);
+                XHR.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                XHR.send(`postContent=${postContent}`);
+            }
+            addPost(p, postID);
+            let addPostNow = (pid) => {
+                if (p !== '') {
+                    $(".posts-container").append(`
+            <div class="card">
+                <div class="post-top" id="post-top-${pid}">
+                    <div class="user user-1">
+                        <div class="avatar avatar-1">
+                            <img src="@Url.Content(Model.loggedInUser.ProfileImageURL)" alt="" srcset="">
+                        </div>
+                        <div class="user-content">
+                            <h4 class="username">@Model.loggedInUser.FirstName @Model.loggedInUser.LastName</h4>
+                        </div>
+                    </div>
+
+                    <div class="post-body">
+                        ${document.getElementById("pContent").value}
+                    </div>
+
+                    <div class="btn-group">
+                        <a class="btn btn-2" id="like-btn" onclick="like(${pid})">
+                            <i class="ri ri-thumb-up-line"></i>
+                            <small>0</small>
+                        </a>
+                        <a class="btn btn-2" id="dislike-btn" onclick="dislike(${pid})">
+                            <i class="ri ri-thumb-down-line"></i>
+                            <small>0</small>
+                        </a>
+                        <a class="btn btn-2" onclick="revealComments(${pid})">
+                            <i class="ri ri-message-2-line"></i>
+                            <small>0</small>
+                        </a>
+                    </div>
+                </div>
+                <div class="post-bottom" id="post-bottom-${pid}" comment-hidden>
+
+                    <div class="heading">
+                        <h3 class="display-1">Comments</h3>
+                    </div>
+
+                    <div class="comment-users">
+
+
+                    </div>
+
+                    <div class="input-field">
+                        <input type="text" name="" id="cContent-${pid}" placeholder="Type your comment...">
+                        <button onclick="addComment(document.getElementById('cContent-${pid}').value, ${pid})">
+                            <span class="input-field-span">
+                                <i class="ri-add-line"></i>
+                            </span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            `)
+
+                }
+                return postsCount--
+
+
+            }
+
+        }
+   }
+
+    let addComment = (p, PID) => {
+        let addCommentToDB = (commentContent, PID) => {
+            const XHR = new XMLHttpRequest();
+            let Url = window.location.origin + `/Comment/AddComment`
+            XHR.onload = () => {
+                if (XHR.responseText === 'Done') {
+                    addPostNow(commentContent)
+                }
+                document.getElementById(`cContent-${PID}`).value = '';
+            };
+            XHR.open("POST", Url, true);
+            XHR.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            XHR.send(`CommentContent=${commentContent}&pid=${PID}`);
+        }
+        addCommentToDB(p, PID);
+        let addPostNow = (comment) => {
+            if (comment !== '') {
+                $(`#post-bottom-${PID}  .comment-users`).append(`
+                            <div class="user user-1">
+                                <div class="avatar avatar-1">
+                                    <img src="@Url.Content(Model.loggedInUser.ProfileImageURL)" alt="" srcset="">
+                                </div>
+                                <div class="user-content">
+                                    <h4 class="username">@Model.loggedInUser.FirstName @Model.loggedInUser.LastName</h4>
+                                    <small>${comment}</small>
+                                </div>
+                            </div>
+`)
+
+            }
+        }
+    }
+</script>

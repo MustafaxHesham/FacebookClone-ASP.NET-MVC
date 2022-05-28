@@ -1,0 +1,81 @@
+﻿@model IEnumerable<FacebookClone.ViewModel.RestrictedUserViewModel>
+@{
+    ViewBag.Title = "Restricted Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_Navbar")
+
+<div class="container search">
+    <div class="heading">
+        <h1 class="display-1">Non-Restricted/@ViewBag.Title</h1>
+    </div>
+
+    <div class="grid-items">
+
+        @{
+            foreach (var item in Model)
+            {
+                if (item.IsRestricted == true)
+                {
+                    <div>
+                        <a href="~/User/Details/@item.user.Id" id="@item.user.Id" style="opacity: 0.5" class="search-grid-item card user user-2">
+                            <div class="avatar avatar-2" style="margin-bottom: 16px">
+                                <img src="@Url.Content(item.user.ProfileImageURL)" alt="">
+                            </div>
+                            <h4 class="display-1">@item.user.FirstName @item.user.LastName</h4>
+                        </a>
+                        <button id="restrict-click" style="width: 100%; height:40px;" onclick="RestrictUserHandling(`${@item.user.Id}`, `${@ViewBag.pid}`)">unRestrict User</button>
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <a href="~/User/Details/@item.user.Id" id="@item.user.Id" class="search-grid-item card user user-2">
+                            <div class="avatar avatar-2" style="margin-bottom: 16px">
+                                <img src="@Url.Content(item.user.ProfileImageURL)" alt="">
+                            </div>
+                            <h4 class="display-1">@item.user.FirstName @item.user.LastName</h4>
+                        </a>
+                        <button style="width: 100%; height:40px;" onclick="RestrictUserHandling(`${@item.user.Id}`, `${@ViewBag.pid}`)"
+                                class="btn btn-1">
+                            Restrict User
+                        </button>
+                    </div>
+                }
+            }
+        }
+        <div class="btn-group" style="margin-top: 16px">
+            <a href="@Request.UrlReferrer" class="btn btn-1" style="margin-bottom: 32px;">
+                <i class="ri ri-arrow-left-line"></i>
+                <span>Go back</span>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function RestrictUserHandling(uid, pid) {
+        const XHR = new XMLHttpRequest();
+        let URL = window.location.origin + `/post/restrictuser`;
+        XHR.onload = function () {
+            if (XHR.responseText === '1') {
+                let doc = document.getElementById(`${uid}`);
+                doc.style.opacity = '0.5';
+                doc.nextElementSibling.removeAttribute("class");
+                doc.nextElementSibling.textContent = "Unrestrict User";
+            }
+            else if (XHR.responseText === '0') {
+                let doc = document.getElementById(`${uid}`);
+                doc.style.opacity = '1';
+                doc.nextElementSibling.className = "btn btn-1";
+                doc.nextElementSibling.textContent = "Restrict User";
+            }
+        }
+        XHR.open('POST', URL, true);
+        XHR.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        XHR.send(`uid=${uid}&pid=${pid}`);
+    }
+</script>
+

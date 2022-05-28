@@ -1,0 +1,83 @@
+﻿@model IEnumerable<FacebookClone.Models.Friendship>
+@{
+    ViewBag.Title = "Notifications";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_Navbar")
+
+<div class="container notifications">
+
+    <div class="heading">
+        <h1 class="display-1">Friend Requests</h1>
+        <h3 class="display-2">Check out the latest requests</h3>
+    </div>
+
+    <div class="list">
+
+        @foreach (var request in Model)
+        {
+            <div class="card" id="card-@request.User1ID">
+                <div class="user user-1">
+                    <div class="avatar avatar-1">
+                        <img src="@Url.Content(request.User1.ProfileImageURL)" alt="" srcset="">
+                    </div>
+                    <h4 class="display-2">@request.User1.FirstName @request.User1.LastName </h4>
+                </div>
+
+                <span id="error-warner"></span>
+                <div class="btn-group">
+
+                    <button class="btn btn-1" onclick="acceptFriend(@request.User1ID)">
+                        <i class="ri-check-line"></i>
+                        <small>Accept</small>
+                    </button>
+
+
+                    <button class="btn btn-1" onclick="rejectFriend(@request.User1ID)" style="background: hsl(349, 81%, 52%);">
+                        <i class="ri-close-line"></i>
+                        <small>Reject</small>
+                    </button>
+                </div>
+            </div>
+        }
+
+
+    </div>
+
+</div>
+
+<script>
+    function acceptFriend(ID) {
+        let req = window.location.origin +
+            `/friendship/AcceptFriendRequest?SenderReqId=${ID}`;
+        const XHR = new XMLHttpRequest();
+        XHR.onload = function () {
+            if (XHR.responseText === "done")
+                document.getElementById(`card-${ID}`).remove();
+            else {
+                document.getElementById("error-warner").style = "color: red";
+                document.getElementById("error-warner").textContent = "Error Happened";
+            }
+        }
+        XHR.open("GET", req, true);
+        XHR.send();
+    }
+
+    function rejectFriend(ID) {
+        let req = window.location.origin +
+            `/friendship/RefuseFriendRequest?SenderReqId=${ID}`;
+        const XHR = new XMLHttpRequest();
+        XHR.onload = function () {
+            if (XHR.responseText === "done")
+                document.getElementById(`card-${ID}`).remove();
+            else {
+                document.getElementById("error-warner").style = "color: red";
+                document.getElementById("error-warner").textContent = "Error Happened";
+            }
+        }
+        XHR.open("GET", req, true);
+        XHR.send();
+    }
+</script>
+

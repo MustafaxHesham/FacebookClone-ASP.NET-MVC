@@ -1,0 +1,47 @@
+﻿@{ 
+    Layout = null;
+}
+
+<header class="header">
+    <ul class="drawer container" inactive>
+        <li>
+            <a href="~/friendship/FriendRequests" class="btn btn-1">
+                <span>Notifications</span>
+            </a>
+        </li>
+        <li>
+            <a href="~/Home/Search" class="btn btn-1">
+                <span>Search</span>
+            </a>
+        </li>
+        <li>
+            <a href="~/User/MyProfile" class="btn btn-1">
+                <span>Profile</span>
+            </a>
+        </li>
+        <li>
+            <a href="~/User/Logout" class="btn btn-1">
+                <span>Log out</span>
+            </a>
+        </li>
+    </ul>
+    <nav class="navbar container">
+        <h3 class="nav-brand">
+            <a href="~/Home/Timeline">Facebook</a>
+        </h3>
+        <button class="btn btn-2" id="nav-menu-btn">
+            <i class="ri-menu-2-fill"></i>
+        </button>
+    </nav>
+</header>
+
+<script>
+    let drawer = $("ul.drawer")
+    let navMenuBtn = $("#nav-menu-btn")
+
+    $().ready(() => {
+        drawer.hide()
+        navMenuBtn.click(() => drawer.toggle())
+    })
+
+</script>

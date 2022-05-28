@@ -1,0 +1,222 @@
+﻿@model FacebookClone.Models.User
+  
+@{
+    ViewBag.Title = "EditProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .edit-profile .avatar {
+        position: relative;
+    }
+
+    .edit-profile #upload-btn {
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        color: var(--white-clr);
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: large;
+        transition: 175ms all ease-out;
+    }
+
+    .edit-profile .avatar:hover #upload-btn {
+        background: hsla(100, 0%, 10%, 0.8) !important;
+        opacity: 1;
+    }
+
+    .edit-profile #file {
+        display: none;
+    }
+
+</style>
+@Html.Partial("_Navbar")
+<div class="container edit-profile form">
+
+    <div class="card">
+
+        <div class="form-wrapper flex-center">
+
+            <div class="heading">
+                <h1 class="display-1">Edit Your Profile</h1>
+                <p class="display-2">Add your new data to be submitted.</p>
+            </div>
+        </div>
+        @using (Html.BeginForm("EditProfile", "User", FormMethod.Post,
+            new { @class = "input-group flex-center", enctype = "multipart/form-data" }))
+        {
+            <div class="user user-2">
+                <div class="avatar avatar-2">
+                    <img src="@Url.Content(Model.ProfileImageURL)" alt="" id="photo">
+                    <input type="file" name="ProfImage" value="@Model.ProfileImageURL" id="file">
+                    <label for="file" id="upload-btn">
+                        <i class="ri-camera-3-line"></i>
+                    </label>
+                </div>
+            </div>
+
+            @Html.HiddenFor(u => u.Id, new { id = "uid" })
+
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-user-line"></i>
+                </span>
+
+                @Html.TextBoxFor(u => u.FirstName, new { placeHolder = Html.DisplayNameFor(u => u.FirstName), required = true })
+            </div>
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-user-line"></i>
+                </span>
+                @Html.TextBoxFor(u => u.LastName, new { placeHolder = Html.DisplayNameFor(u => u.LastName), required = true })
+            </div>
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-mail-line"></i>
+                </span>
+                @Html.TextBoxFor(u => u.Email, new
+           {
+               id = "email",
+               placeHolder = Html.DisplayNameFor(u => u.Email),
+               required = true,
+               onblur = "CheckEmailEdition()"
+           })
+            </div>
+
+            <span id="validate-email"></span>
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-lock-line"></i>
+                </span>
+                @Html.PasswordFor(u => u.Password, new
+           {
+               id = "P",
+               placeHolder = Html.DisplayNameFor(u => u.Password),
+               required = true,
+               onblur = "CheckEmailEdition()"
+           }
+            )
+            </div>
+
+            <p id="pass-confirm"></p>
+
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-check-double-line"></i>
+                </span>
+                <input type="password" id="PC" name="Password" placeholder="Confirm Password" required>
+            </div>
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-map-pin-2-line"></i>
+                </span>
+                @Html.TextBoxFor(u => u.City, new { placeHolder = Html.DisplayNameFor(u => u.City), required = true })
+            </div>
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-map-pin-2-line"></i>
+                </span>
+                @Html.TextBoxFor(u => u.Country, new { placeHolder = Html.DisplayNameFor(u => u.Country), required = true })
+            </div>
+
+            <div class="input-field">
+                <span class="input-field-span">
+                    <i class="ri ri-map-pin-2-line"></i>
+                </span>
+                @Html.TextBoxFor(u => u.PhoneNumber, new { placeHolder = Html.DisplayNameFor(u => u.PhoneNumber), required = true })
+            </div>
+
+
+
+            <div class="btn-group" style="margin-top: 16px">
+                @Html.AntiForgeryToken()
+                <button onclick="ValidateData(event);" id="regForm" type="submit" class="btn btn-1" style="margin-bottom: 32px;">
+                    <i class="ri ri-user-add-line"></i>
+                    <small>Edit Profile</small>
+                </button>
+            </div>
+
+            <div class="btn-group" style="margin-top: 16px">
+                <a href="@Request.UrlReferrer" class="btn btn-1" style="margin-bottom: 32px;">
+                    <i class="ri ri-arrow-left-line"></i>
+                    <span>Go back</span>
+                </a>
+            </div>
+        }
+
+    </div>
+
+
+    </div>
+
+</div>
+
+<script>
+        let imgDiv = document.querySelector(".avatar")
+        let img = document.querySelector("img#photo")
+        let file = document.querySelector("input#file")
+        let uploadBtn = document.querySelector("label#upload-btn")
+
+        file.addEventListener("change", () => {
+
+            let choosedFile = file.files[0]
+            if (choosedFile)
+                var reader = new FileReader();
+                reader.addEventListener("load", () => img.setAttribute("src", reader.result))
+                reader.readAsDataURL(choosedFile)
+
+        })
+
+    let formState = false;
+    (function defState() {
+        formState = false;
+    })();
+    function ValidateData(event) {
+        let regButton = document.getElementById('regForm');
+        if (document.getElementById("P").value !== document.getElementById("PC").value) {
+            event.preventDefault();
+            let confirm = document.getElementById("pass-confirm");
+            confirm.textContent = "Two fields aren't identical.";
+            confirm.style.cssText = "color: red;font-size: small";
+        }
+        if (formState === false)
+            event.preventDefault();
+    }
+
+    function CheckEmailEdition() {
+        let Email = document.getElementById("email").value;
+        let Uid = document.getElementById("uid").value;
+        let RequestTitle = window.location.origin +
+            `/User/ValidateEmailEdition?Email=${Email}&id=${Uid}`;
+        const XHR = new XMLHttpRequest();
+        XHR.onload = function () {
+            if (XHR.responseText === "valid") {
+                document.getElementById("validate-email").textContent = "";
+                document.getElementById("validate-email").style.cssText = "color: red";
+                formState = true;
+            }
+            else {
+                document.getElementById("validate-email").textContent = "Invalid Email";
+                formState = false;
+            }
+        };
+        XHR.open("GET", RequestTitle, true);
+        XHR.send();
+    }
+
+
+</script>
+

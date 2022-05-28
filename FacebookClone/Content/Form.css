@@ -1,0 +1,88 @@
+.form .card {
+    margin-bottom: 0px
+}
+
+.edit-profile .input-group {
+    margin-top: 0px;
+    padding-top: 0px
+}
+
+.split {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: auto;
+    grid-auto-rows: calc(100vh - 64px);
+}
+
+.input-group > .input-field {
+    margin-bottom: 24px
+}
+
+/* Input Variants */
+.input-field {
+    display: flex;
+    align-items: center;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    width: 240px;
+}
+
+.input-field > * {
+    color: var(--blue-clr);
+    background: var(--white-clr);
+}
+
+.input-field input {
+    padding: 8px 6px;
+    border-radius: 0px 6px 6px 0px;
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+.input-field input::placeholder {
+    color: var(--grey-clr);
+}
+
+span.input-field-span {
+    border-radius: 6px 0px 0px 6px;
+    height: 32px;
+    min-width: 32px;
+    display: grid;
+    place-content: center;
+}
+
+.form-wrapper {
+    padding: 32px;
+
+    display: flex;
+
+    position: relative;
+}
+
+.input-group {
+    margin-top: 32px;
+    display: flex;
+}
+
+@media all and (max-width: 991px) {
+    .split {
+        grid-template-columns: 1fr;
+    }
+
+    .split > .form-image {
+        display: none;
+    }
+
+    .input-group {
+        width: 100%
+    }
+}
+
+
+@media all and (max-width: 525px) {
+    .input-field {
+        width: 100%;
+    }
+}
